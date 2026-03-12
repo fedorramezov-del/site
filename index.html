@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>SpaceShare</title>
 
 <style>
@@ -16,7 +19,7 @@ font-family:Segoe UI, sans-serif;
 
 body{
 background:#020617;
-color:white;
+color:#e2e8f0;
 overflow-x:hidden;
 }
 
@@ -32,187 +35,238 @@ z-index:-1;
 /* ---------- HERO ---------- */
 
 .hero{
-
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-
 height:100vh;
-
 text-align:center;
-
 }
 
-h1{
-
-font-size:64px;
-
+.hero h1{
+font-size:70px;
 background:linear-gradient(90deg,#38bdf8,#818cf8);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-
 }
 
 .subtitle{
-
-opacity:0.7;
+opacity:0.8;
 margin-top:10px;
 margin-bottom:40px;
-
 }
 
-/* ---------- ORBIT ANIMATION ---------- */
+/* ---------- ORBIT ---------- */
 
 .orbit-container{
-
 position:relative;
-width:220px;
-height:220px;
+width:240px;
+height:240px;
 margin-top:30px;
-
 }
 
 .logo{
-
-width:100px;
-height:100px;
-
+width:110px;
+height:110px;
+border-radius:22px;
 background:linear-gradient(135deg,#38bdf8,#6366f1);
-border-radius:20px;
-
 display:flex;
 align-items:center;
 justify-content:center;
-
-font-size:32px;
+font-size:38px;
 font-weight:bold;
-
 margin:auto;
-
 }
 
 .orbit{
-
 position:absolute;
 width:100%;
 height:100%;
-
 border:1px dashed rgba(255,255,255,0.1);
-
 border-radius:50%;
-
 animation:spin 12s linear infinite;
-
 }
 
 .satellite{
-
 position:absolute;
-
-top:-6px;
+top:-7px;
 left:50%;
-
-width:12px;
-height:12px;
-
+width:14px;
+height:14px;
 background:#38bdf8;
-
 border-radius:50%;
-
+box-shadow:0 0 10px #38bdf8;
 }
 
 @keyframes spin{
-
 from{transform:rotate(0deg);}
 to{transform:rotate(360deg);}
-
 }
 
 /* ---------- BUTTONS ---------- */
 
 .buttons{
-
-margin-top:40px;
 display:flex;
 gap:20px;
-
+margin-top:40px;
 }
 
 .btn{
-
-padding:14px 26px;
-border-radius:10px;
-
+padding:14px 28px;
+border-radius:12px;
 text-decoration:none;
 font-weight:600;
-
 transition:0.25s;
-
 }
 
 .download{
-
 background:#38bdf8;
 color:#020617;
-
 }
 
 .download:hover{
-
 background:#0ea5e9;
-transform:translateY(-2px);
-
+transform:translateY(-3px);
 }
 
 .github{
-
 background:#1e293b;
-
 }
 
 .github:hover{
-
 background:#334155;
-
+transform:translateY(-3px);
 }
 
-/* ---------- DEMO SECTION ---------- */
+/* ---------- FEATURES ---------- */
+
+.features{
+margin-top:120px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
+padding:0 40px;
+max-width:1000px;
+margin-left:auto;
+margin-right:auto;
+}
+
+.card{
+background:#0f172a;
+padding:30px;
+border-radius:14px;
+transition:0.25s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+background:#1e293b;
+}
+
+.card h3{
+margin-bottom:10px;
+}
+
+/* ---------- LIVE DEMO ---------- */
 
 .demo{
-
-margin-top:120px;
-padding:60px;
-
+margin-top:140px;
 text-align:center;
-
 }
 
 .demo h2{
-
 font-size:36px;
-margin-bottom:40px;
-
+margin-bottom:30px;
 }
 
-.demo img{
-
+.demo-window{
 width:900px;
 max-width:95%;
+background:#0f172a;
+border-radius:14px;
+margin:auto;
+box-shadow:0 30px 70px rgba(0,0,0,0.6);
+overflow:hidden;
+}
 
-border-radius:12px;
+.demo-header{
+background:#1e293b;
+padding:16px;
+font-weight:600;
+}
 
-box-shadow:0 20px 60px rgba(0,0,0,0.6);
+.demo-chat{
+height:260px;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+overflow:hidden;
+}
 
+.demo-message{
+background:#1e293b;
+padding:10px 14px;
+border-radius:8px;
+width:fit-content;
+font-size:14px;
+animation:fade 0.4s;
+}
+
+.demo-input{
+display:flex;
+gap:10px;
+padding:14px;
+background:#020617;
+}
+
+.demo-input input{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:none;
+background:#1e293b;
+color:white;
+}
+
+.demo-input button{
+padding:10px 16px;
+background:#38bdf8;
+border:none;
+border-radius:8px;
+color:#020617;
+}
+
+@keyframes fade{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* ---------- INTERFACE PREVIEW ---------- */
+
+.preview{
+margin-top:140px;
+text-align:center;
+padding:0 20px;
+}
+
+.preview h2{
+font-size:36px;
+margin-bottom:40px;
+}
+
+.preview img{
+width:1000px;
+max-width:95%;
+border-radius:14px;
+box-shadow:0 25px 60px rgba(0,0,0,0.7);
 }
 
 footer{
-
-margin-top:100px;
+margin-top:120px;
 padding:30px;
 text-align:center;
 opacity:0.5;
-
 }
 
 </style>
@@ -225,7 +279,10 @@ opacity:0.5;
 <section class="hero">
 
 <h1>SpaceShare</h1>
-<div class="subtitle">Fast LAN File Sharing Server</div>
+
+<div class="subtitle">
+Fast LAN File Sharing Server
+</div>
 
 <div class="orbit-container">
 
@@ -233,19 +290,18 @@ opacity:0.5;
 <div class="satellite"></div>
 </div>
 
-<div class="logo">
-S
-</div>
+<div class="logo">S</div>
 
 </div>
 
 <div class="buttons">
 
-<a class="btn download" href="https://github.com/YOUR_USERNAME/SpaceShare/releases">
+<a class="btn download" id="downloadBtn" href="https://github.com/fedorramezov-del/site/releases/tag/SMT" >
 Download EXE
 </a>
 
-<a class="btn github" href="https://github.com/YOUR_USERNAME/SpaceShare">
+<a class="btn github"
+href="https://github.com/fedorramezov-del
 GitHub
 </a>
 
@@ -253,7 +309,62 @@ GitHub
 
 </section>
 
+<section class="features">
+
+<div class="card">
+<h3>⚡ Fast Transfer</h3>
+<p>Instant file sharing across LAN.</p>
+</div>
+
+<div class="card">
+<h3>💬 LAN Chat</h3>
+<p>Built-in real-time messaging.</p>
+</div>
+
+<div class="card">
+<h3>🎨 Themes</h3>
+<p>Modern customizable interface.</p>
+</div>
+
+<div class="card">
+<h3>📦 Upload</h3>
+<p>Upload and download files easily.</p>
+</div>
+
+<div class="card">
+<h3>🔒 Admin Panel</h3>
+<p>Control server settings and files.</p>
+</div>
+
+<div class="card">
+<h3>🌐 LAN Only</h3>
+<p>No internet required.</p>
+</div>
+
+</section>
+
 <section class="demo">
+
+<h2>Live Demo</h2>
+
+<div class="demo-window">
+
+<div class="demo-header">
+SpaceShare Server
+</div>
+
+<div class="demo-chat" id="demoChat"></div>
+
+<div class="demo-input">
+<input placeholder="Type message..." disabled>
+<button disabled>Send</button>
+</div>
+
+</div>
+
+</section>
+
+<section class="preview">
 
 <h2>Interface Preview</h2>
 
@@ -262,32 +373,28 @@ GitHub
 </section>
 
 <footer>
-
 SpaceShare • Open Source LAN File Sharing
-
 </footer>
 
 <script>
 
-/* ---------- STAR PARTICLES ---------- */
+/* ---------- STAR FIELD ---------- */
 
-const canvas = document.getElementById("stars")
-const ctx = canvas.getContext("2d")
+const canvas=document.getElementById("stars")
+const ctx=canvas.getContext("2d")
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
 
-let stars = []
+let stars=[]
 
-for(let i=0;i<200;i++){
+for(let i=0;i<250;i++){
 
 stars.push({
-
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
 size:Math.random()*2,
-speed:Math.random()*0.3
-
+speed:Math.random()*0.4
 })
 
 }
@@ -314,6 +421,72 @@ requestAnimationFrame(draw)
 }
 
 draw()
+
+/* ---------- LIVE DEMO MESSAGES ---------- */
+
+const demoMessages=[
+"Server started on 192.168.0.12",
+"User Alex connected",
+"File uploaded: report.pdf",
+"User Maria joined chat",
+"Download completed: photo.png",
+"New message from Alex",
+"User Ivan connected"
+]
+
+const chat=document.getElementById("demoChat")
+let index=0
+
+function addDemoMessage(){
+
+if(index>=demoMessages.length){
+index=0
+chat.innerHTML=""
+}
+
+const msg=document.createElement("div")
+msg.className="demo-message"
+msg.innerText=demoMessages[index]
+
+chat.appendChild(msg)
+
+index++
+
+chat.scrollTop=chat.scrollHeight
+
+}
+
+setInterval(addDemoMessage,2000)
+
+/* ---------- LOAD LATEST RELEASE ---------- */
+
+async function loadRelease(){
+
+const repo="YOUR_USERNAME/SpaceShare"
+
+try{
+
+const response=await fetch(`https://api.github.com/repos/${repo}/releases/latest`)
+const data=await response.json()
+
+const asset=data.assets.find(a=>a.name.endsWith(".exe"))
+
+if(asset){
+
+const btn=document.getElementById("downloadBtn")
+
+btn.href=asset.browser_download_url
+btn.innerText="Download "+data.tag_name
+
+}
+
+}catch(e){
+console.log("Release not found")
+}
+
+}
+
+loadRelease()
 
 </script>
 
