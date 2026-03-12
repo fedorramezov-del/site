@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Введите код из приложения</h2>
+
+<form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+    <input type="text" name="code" required>
+    
+    <button type="submit">Подтвердить</button>
+</form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h2 class="ui header">Вход в систему</h2>
+        <form method="POST" class="ui form" action="{{ url_for('login') }}">
+            <!-- Добавление CSRF-токена для защиты формы -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="example@mail.com" required>
+            </div>
+            <div class="field">
+                <label>Пароль</label>
+                <input type="password" name="password" placeholder="Ваш пароль" required>
+            </div>
+            <button type="submit" class="ui-button" style="background-color: #0095da;">Войти</button>
+        </form>
+        <div style="margin-top: 15px; text-align: center;">
+            <p>Нет аккаунта? <a href="{{ url_for('register') }}" style="color:aqua">Зарегистрироваться</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

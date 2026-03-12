@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Публичная ссылка{% endblock %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <h2><i class="fa-solid fa-share-nodes"></i> Публичная ссылка</h2>
+
+    <p style="color: var(--text-muted); margin-bottom:20px;">
+      Поделитесь этой ссылкой для скачивания файла
+    </p>
+
+    <div style="margin-bottom:15px;">
+      <strong>Файл:</strong> {{ file.filename }}
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+      <input 
+        id="share-link"
+        type="text"
+        value="{{ link }}"
+        readonly
+        style="
+          flex:1;
+          padding:10px;
+          border-radius:8px;
+          border:1px solid var(--glass-border);
+          background: rgba(255,255,255,0.03);
+          color: var(--text-main);
+        "
+      >
+
+      <button onclick="copyLink()" class="theme-save-btn">
+        <i class="fa-solid fa-copy"></i>
+      </button>
+    </div>
+
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+
+      <a href="{{ link }}" class="theme-save-btn">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        Открыть
+      </a>
+
+      <a href="{{ url_for('profile', user_id=current_user.id) }}" class="theme-save-btn">
+        <i class="fa-solid fa-user"></i>
+        К профилю
+      </a>
+
+    </div>
+
+    <p id="copy-msg" style="margin-top:15px; color:var(--success); display:none;">
+      Ссылка скопирована ✔
+    </p>
+
+  </div>
+</div>
+
+<script>
+function copyLink() {
+    const input = document.getElementById("share-link");
+    input.select();
+    input.setSelectionRange(0, 99999);
+
+    navigator.clipboard.writeText(input.value);
+
+    document.getElementById("copy-msg").style.display = "block";
+}
+</script>
+
+{% endblock %}

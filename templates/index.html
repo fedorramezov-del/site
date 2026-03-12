@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Добро пожаловать!</h1>
+  <h2>Последние загрузки:</h2>
+  
+  <div class="batch-list">
+    {% for group in grouped_files %}
+      {% set first_file = group[0] %}
+      {% set is_batch = first_file.batch_id is not none %}
+      
+      {% set border_color = "var(--accent-color)" if is_batch else "rgba(255,255,255,0.1)" %}
+
+      <div class="file-batch" style="background: rgba(255,255,255,0.05); margin-bottom: 20px; padding: 15px; border-radius: 12px; border: 1px solid {{ border_color }};">
+        
+        {% set count = group|length %}
+          <h3 style="margin-top: 0; color: var(--accent-color); font-size: 1.1em;">
+              Пакет из 
+              {% if count == 1 %}
+               {{ count }}-го файла
+              {% elif 2 < count <= 4 %}
+              {{ count }}-ёх файлов
+              {% elif count == 5 %}
+              {{ count }}-и файлов
+              {% elif count == 2 %}
+              {{ count }}-ух файлов
+              {% else %}
+              
+              {% endif %}
+          </h3>
+        <p style="font-size: 0.8em; color: gray; margin-bottom: 10px;">
+          {{ first_file.upload_time | localtime }} 
+          Загрузил: 
+          <a href="{{ url_for('profile', user_id=first_file.user.id) }}" style="color: #38bdf8;text-decoration: underline#38bdf8 2px; font-weight: bold;">
+            {{ first_file.user.username }}
+          </a>
+        </p>
+        
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          {% for f in group %}
+            {# Убираем только расширение для красивого отображения #}
+            {% set display_name = f.filename.rsplit('.', 1)[0] %}
+            
+           <li class="file-row-item {% if not loop.last %}with-border{% endif %}">
+    
+                <div class="file-info">
+                    <div class="file-title" title="{{ f.filename }}">
+                        <i class="file alternate outline icon"></i>
+                        {{ display_name }}
+                    </div>
+
+                    
+                </div>
+
+                <div class="actions">
+                    <a href="{{ url_for('view_file', file_id=f.id) }}" class="btn-action btn-view">
+                        Просмотр
+                    </a>
+                    
+                    {% if f.user_id == current_user.id %}
+                    <a href="{{ url_for('share_file', file_id=f.id) }}" class="btn-action btn-view">
+                      Поделиться
+                    </a>
+                    {%endif%}
+
+                    <a href="{{ url_for('download_file', file_id=f.id) }}" class="btn-action btn-download">
+                        Скачать
+                    </a>
+                    
+                    {% if f.user_id == current_user.id %} 
+                    
+                    <form action="{{ url_for('delete_file', file_id=f.id) }}" 
+                          method="POST" 
+                          class="inline-form"
+                          onsubmit="return confirm('Удалить этот файл?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" class="btn-action btn-delete">
+                            Удалить
+                        </button>
+                    </form>  
+                    
+                    {% endif %}
+                </div>
+
+            </li>
+          {% endfor %}
+        </ul>
+        {% if first_file.description %}
+            <div class="batch-description">
+               Описание: {{ first_file.description }}
+            </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

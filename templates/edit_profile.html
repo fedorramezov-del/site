@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Редактировать профиль</h2>
+        
+        <form method="POST" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Вставка CSRF-токена -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="color: var(--text-muted); font-size: 0.9rem;">Имя пользователя</label>
+                <input type="text" name="username" value="{{ user.username }}" required 
+                       style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.8rem; border-radius: 8px;">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="color: var(--text-muted); font-size: 0.9rem;">Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required
+                       style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.8rem; border-radius: 8px;">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="color: var(--text-muted); font-size: 0.9rem;">О себе</label>
+                <textarea name="bio" rows="4" 
+                          style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.8rem; border-radius: 8px; resize: vertical;">{{ user.bio }}</textarea>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="stat-card" style="cursor: pointer; flex: 1; border: none; background: var(--accent-color); color: var(--bg-color); font-weight: bold;">
+                    Сохранить изменения
+                </button>
+                <a href="{{ url_for('profile', user_id=user.id) }}" class="stat-card" style="flex: 1; text-align: center; text-decoration: none;">
+                    <button type="submit" class="stat-card" style="cursor: pointer; flex: 1; border: none; background: var(--accent-color); color: var(--bg-color); font-weight: bold;">
+                    Отмена
+                </button>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

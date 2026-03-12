@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  
+      <div class="auth-card">
+          <h2 class="ui header">Регистрация профиля</h2>
+          <form method="POST" class="ui form">
+              <!-- Добавление CSRF-токена для защиты формы -->
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <div class="field">
+                  <label>Имя пользователя</label>
+                  <input type="text" name="username" placeholder="ivan_ivanov" required>
+              </div>
+              <div class="field">
+                  <label>Email</label>
+                  <input type="email" name="email" placeholder="example@mail.com" required>
+              </div>
+              <div class="field">
+                  <label>Пароль</label>
+                  <input type="password" name="password" placeholder="Минимум 6 символов" required>
+              </div>
+              <button type="submit" class="ui-button" style="background-color: #0095da;">Создать аккаунт</button>
+          </form>
+          <div style="margin-top: 15px; text-align: center;">
+              <p>Уже есть аккаунт? <a href="{{ url_for('login') }}" style="color:aqua">Войти</a></p>
+          </div>
+      </div>
+ 
+
+
+{% endblock %}

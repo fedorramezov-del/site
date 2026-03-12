@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск файлов{% endblock %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <h2>
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Поиск файлов
+    </h2>
+
+    <form action="{{ url_for('search') }}" method="get" style="margin-bottom:20px;">
+      <div style="display:flex; gap:10px;">
+        
+        <input
+          type="text"
+          name="q"
+          placeholder="Введите имя файла..."
+          value="{{ query }}"
+          style="
+            flex:1;
+            padding:10px;
+            border-radius:8px;
+            border:1px solid var(--glass-border);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+          "
+        >
+
+        <button type="submit" class="theme-save-btn">
+          <i class="fa-solid fa-search"></i>
+        </button>
+
+      </div>
+    </form>
+
+
+    {% if files %}
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      {% for file in files %}
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:10px;
+        border-radius:8px;
+        background: rgba(255,255,255,0.03);
+        border:1px solid var(--glass-border);
+      ">
+
+        <div>
+          <i class="fa-solid fa-file"></i>
+          {{ file.filename }}
+        </div>
+
+        <div style="display:flex; gap:10px;">
+
+          <a href="{{ url_for('download_file', file_id=file.id) }}" class="theme-save-btn">
+            <i class="fa-solid fa-download"></i>
+          </a>
+
+          <a href="{{ url_for('share_file', file_id=file.id) }}" class="theme-save-btn">
+            <i class="fa-solid fa-share-nodes"></i>
+          </a>
+
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <p style="color:var(--text-muted); margin-top:15px;">
+      <i class="fa-solid fa-circle-info"></i>
+      Ничего не найдено
+    </p>
+
+    {% endif %}
+
+  </div>
+</div>
+<script>
+    input.addEventListener("input", function(){
+ fetch("/search?q=" + this.value)
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru"
+      data-theme="{{ current_user.theme if current_user.is_authenticated else 'default' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Space Share{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  {% if current_user.is_authenticated and current_user.theme == "custom" %}
+    <style>
+    :root {
+      --custom-accent: {{ current_user.custom_accent }};
+      --custom-bg: {{ current_user.custom_bg }};
+      --custom-container: {{ current_user.custom_container }};
+    }
+    </style>
+  {% endif %}
+      
+</head>
+<body>
+  
+  <nav>
+    <a href="{{ url_for('index') }}">Главная</a>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('upload') }}">Загрузить</a>
+      <a href="{{ url_for('search') }}">Поиск</a>
+      <a href="{{ url_for('profile', user_id=current_user.id) }}">Профиль</a>
+      <a href="{{ url_for('logout') }}">Выйти</a>
+      <a href="{{ url_for('lan_chat') }}">Проход в чат(в разработке)</a>
+      
+  <div class="theme-wrapper">
+  <button id="theme-toggle-btn" class="theme-btn">
+    🎨 Тема
+  </button>
+
+  <div id="theme-dropdown" class="theme-dropdown">
+      <div class="theme-option" data-theme="default">Синяя</div>
+      <div class="theme-option" data-theme="red">Красная</div>
+      <div class="theme-option" data-theme="black">Чёрная</div>
+      <div class="theme-option" data-theme="cherry">Вишнёвая</div>
+      <div class="theme-option" data-theme="neon">Неоновая</div>
+      <div class="theme-option" data-theme="custom">Своя тема</div>
+
+      <hr class="theme-divider">
+
+      <div id="theme-builder" class="theme-builder">
+
+        <label>
+          Акцент
+          <input type="color" id="tb-accent">
+        </label>
+
+        <label>
+          Фон страницы
+          <input type="color" id="tb-bg">
+        </label>
+
+        <label>
+          Контейнер
+          <input type="color" id="tb-container">
+        </label>
+
+        <button id="save-custom-theme" class="theme-save-btn">
+          💾 Сохранить
+        </button>
+
+      </div>
+  </div>
+</div>
+</div>
+    {% else %}
+      <a href="{{ url_for('register') }}">Регистрация</a>
+    {% endif %}
+  </nav>
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  
+</body>
+
+</html>

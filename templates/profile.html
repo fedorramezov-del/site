@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="ui container" style="margin-top: 20px; color: var(--text-main);">
+
+  <!-- ШАПКА ПРОФИЛЯ -->
+  <div class="ui segment"
+       style="background: var(--container-bg);
+              border: 1px solid var(--glass-border);
+              border-radius: 16px;
+              padding: 30px;
+              backdrop-filter: blur(12px);">
+
+    <div style="display: flex; align-items: center; gap: 30px; flex-wrap: wrap;">
+
+      <!-- АВАТАР -->
+      <div style="position: relative; flex-shrink: 0; text-align:center;">
+
+        {% if user.avatar %}
+          <img id="avatar-preview"
+               src="{{ url_for('static', filename='uploads/avatars/' + user.avatar) }}"
+               alt="Avatar"
+               style="border: 3px solid var(--accent-color);
+                      object-fit: cover;
+                      width: 120px;
+                      height: 120px;
+                      border-radius: 50%;
+                      box-shadow: 0 0 20px var(--accent-color);">
+        {% else %}
+          <img id="avatar-preview"
+               src="https://via.placeholder.com/150"
+               alt="Avatar"
+               style="border: 3px solid var(--accent-color);
+                      width: 120px;
+                      height: 120px;
+                      object-fit: cover;
+                      border-radius: 50%;">
+        {% endif %}
+
+        {% if current_user.is_authenticated and current_user.id == user.id %}
+
+        <div style="margin-top: 12px;">
+          <label for="avatar-input" class="btn-action btn-view"
+                 style="background-color: var(--accent-color);
+                        color: var(--bg-color);
+                        border-radius: 8px;
+                        padding: 8px 16px;
+                        display: inline-block;
+                        cursor: pointer;
+                        font-size: 0.8rem;
+                        font-weight: 600;">
+            Изменить
+          </label>
+          <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+        </div>
+
+        <div id="avatar-confirm-controls"
+             style="display: none; margin-top: 10px;">
+
+          <button onclick="uploadAvatar()"
+                class="btn-action btn-download">
+              Ок
+          </button>
+
+          <button onclick="cancelAvatarEdit()"
+                   class="btn-action btn-delete">
+              Отмена
+          </button>
+        </div>
+
+        {% endif %}
+      </div>
+
+      <!-- ИНФОРМАЦИЯ -->
+      <div style="flex-grow: 1; min-width: 250px;">
+
+        <div style="display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;">
+
+          <h2 style="margin: 0; color: var(--accent-color);">
+            {{ user.username }}
+            {% if user.role == "admin" %}
+              <span style='background: var(--container-bg);
+                          padding: 12px 18px;
+                          border-radius: 10px;
+                          border: 1px solid var(--glass-border);
+                          color:red'>
+              Admin
+              </span>
+            {% endif %}
+            <div style="color: var(--text-muted);
+                        font-size: 0.85rem;">
+              {% set days = (now - user.created_at).days if user.created_at else 0 %}
+
+              В системе с:
+              {% if days >= 7 %}
+                  {{ user.created_at.strftime('%d.%m.%Y') }}
+              {% else %}
+                  Недавно
+              {% endif %}
+            </div>
+          </h2>
+
+         {% if current_user.is_authenticated and current_user.id == user.id %}
+
+            <div style="display: flex; gap: 10px;">
+
+              <!-- Кнопка редактирования -->
+              <a href="{{ url_for('edit_profile') }}"
+                class="btn-action btn-view">
+                Настроить
+              </a>
+
+              <!-- 2FA управление -->
+              {% if current_user.two_factor_enabled %}
+                
+                <form method="POST" action="{{ url_for('disable_2fa') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-action btn-delete">
+                        Отключить 2FA
+                    </button>
+                </form>
+
+              {% else %}
+
+                <a href="{{ url_for('enable_2fa') }}" class="btn-action btn-download">
+                    Включить 2FA
+                </a>
+
+              {% endif %}
+
+            </div>
+
+          {% endif %}
+
+        </div>
+
+        <div style="line-height: 1.4;
+                    background: rgba(0,0,0,0.2);
+                    padding: 12px;
+                    border-radius: 10px;
+                    border: 1px solid var(--glass-border);">
+
+          <small style="text-transform: uppercase;
+                        opacity: 0.6;
+                        display: block;
+                        margin-bottom: 5px;">
+            О себе
+          </small>
+
+          {% if user.bio %}
+            {{ user.bio|linebreaksbr }}
+          {% else %}
+            <span style="font-style: italic; opacity: 0.5;">
+              Информации нет
+            </span>
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- СПИСОК ФАЙЛОВ -->
+  <div style="margin-top: 40px;">
+
+    <div style="display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;">
+
+      <h3 style="margin: 0; color: var(--accent-color);">
+        Загруженные файлы
+      </h3>
+
+      <div style="background: rgba(0,0,0,0.2);
+                  color: var(--accent-color);
+                  padding: 6px 12px;
+                  border-radius: 8px;">
+        Всего: {{ files.total }}
+      </div>
+
+    </div>
+
+    {% for f in files.items %}
+    <div style="background: var(--container-bg);
+                border: 1px solid var(--glass-border);
+                margin-bottom: 10px;
+                border-radius: 12px;
+                padding: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: 0.3s ease;">
+
+      <div>
+        <div style="font-weight: 600; color: var(--text-main);">
+          {{ f.original_name or f.filename }}
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          {{ f.upload_time | localtime }} 
+        </div>
+      </div>
+
+      <a href="{{ url_for('download_file', file_id=f.id) }}" class="btn-action btn-download">
+         Скачать
+      </a>
+
+    </div>
+    {% else %}
+      <div style="padding: 20px;
+                  text-align: center;
+                  border: 1px dashed var(--glass-border);
+                  border-radius: 12px;
+                  color: var(--text-muted);">
+          Файлы отсутствуют
+      </div>
+    {% endfor %}
+  </div>
+
+
+  <!-- ПАГИНАЦИЯ -->
+  {% if files.pages > 1 %}
+  <div style="margin-top: 30px;
+              display: flex;
+              justify-content: center;
+              gap: 10px;">
+
+      {% for p in files.iter_pages() %}
+          {% if p %}
+          {% set is_active = (p == files.page) %}
+              <a href="{{ url_for('profile', user_id=user.id, page=p) }}"class="pagination-btn {% if p == files.page %}active{% endif %}">
+                  {{ p }}
+              </a>
+          {% endif %}
+      {% endfor %}
+
+  </div>
+  {% endif %}
+
+</div>
+
+
+
+<script>
+const avatarInput = document.getElementById('avatar-input');
+const avatarPreview = document.getElementById('avatar-preview');
+const confirmControls = document.getElementById('avatar-confirm-controls');
+const originalSrc = avatarPreview.src;
+
+avatarInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Файл слишком большой. Максимальный размер 5МБ.');
+            this.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            avatarPreview.src = e.target.result;
+            confirmControls.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+function cancelAvatarEdit() {
+    avatarPreview.src = originalSrc;
+    avatarInput.value = '';
+    confirmControls.style.display = 'none';
+}
+
+async function uploadAvatar() {
+    const file = avatarInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const saveBtn = document.querySelector('#avatar-confirm-controls button');
+    saveBtn.classList.add('loading', 'disabled');
+
+    try {
+        const response = await fetch("{{ url_for('edit_avatar') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        });
+
+        if (response.ok) {
+            location.reload(); 
+        } else {
+            const errorData = await response.json().catch(() => ({}));
+            alert('Ошибка при загрузке: ' + (errorData.message || 'Упс!'));
+            saveBtn.classList.remove('loading', 'disabled');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Произошла ошибка ');
+        saveBtn.classList.remove('loading', 'disabled');
+    }
+}
+</script>
+{% endblock %}
+

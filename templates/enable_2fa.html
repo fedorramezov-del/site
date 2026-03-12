@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Включение двухфакторной аутентификации</h2>
+
+<p>Отсканируйте QR-код в Google Authenticator:</p>
+
+<img src="data:image/png;base64,{{ qr_code }}">
+
+<form method="POST" action="{{ url_for('confirm_2fa') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+    <label>Введите код:</label>
+    <input type="text" name="code" required>
+    
+    <button type="submit">Подтвердить</button>
+</form>
+{% endblock %}

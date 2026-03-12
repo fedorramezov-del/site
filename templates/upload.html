@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card upload-card">
+
+        <form method="post" enctype="multipart/form-data" id="upload-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+            <div id="drop-zone" class="drop-zone">
+                <label for="file-input" class="custom-file-upload">
+                    Перетащите файлы сюда или нажмите для выбора
+                </label>
+
+                <input type="file"
+                       name="files"
+                       id="file-input"
+                       multiple
+                       required>
+
+                <span id="file-name" class="file-name-display">
+                    Файлы не выбраны
+                </span>
+
+                <div id="preview-container" class="preview-container"></div>
+
+                <textarea name="description"
+                          class="upload-description"
+                          placeholder="Добавьте подпись к файлам...">
+                </textarea>
+            </div>
+
+            <div id="progress-wrapper" style="display: none; margin: 20px 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9em;">
+                    <span id="progress-status" style="color: var(--accent-color);">Загрузка...</span>
+                    <span id="progress-percent" style="color: var(--accent-color);">0%</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                    <div id="progress-bar" style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.2s;"></div>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn">
+                Загрузить
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+const uploadForm = document.getElementById('upload-form');
+const fileInput = document.getElementById('file-input');
+const fileNameDisplay = document.getElementById('file-name');
+const progressWrapper = document.getElementById('progress-wrapper');
+const progressBar = document.getElementById('progress-bar');
+const progressPercent = document.getElementById('progress-percent');
+const progressStatus = document.getElementById('progress-status');
+const submitBtn = document.getElementById('submit-btn');
+
+// Обновление имени выбранных файлов
+fileInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+        fileNameDisplay.textContent = `Выбрано файлов: ${this.files.length}`;
+    } else {
+        fileNameDisplay.textContent = 'Файлы не выбраны';
+    }
+});
+
+uploadForm.onsubmit = function(e) {
+    e.preventDefault(); // Отменяем стандартную отправку
+
+    const formData = new FormData(uploadForm);
+    const xhr = new XMLHttpRequest();
+
+    // Показываем индикатор и блокируем кнопку
+    progressWrapper.style.display = 'block';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.5';
+    submitBtn.textContent = 'В процессе...';
+
+    // Отслеживание прогресса загрузки
+    xhr.upload.onprogress = function(event) {
+        if (event.lengthComputable) {
+            const percentComplete = Math.round((event.loaded / event.total) * 100);
+            progressBar.style.width = percentComplete + '%';
+            progressPercent.textContent = percentComplete + '%';
+            
+            if (percentComplete === 100) {
+                progressStatus.textContent = 'Обработка сервером...';
+            }
+        }
+    };
+
+    // Обработка завершения
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Если всё успешно, перенаправляем на главную, как делает ваш app.py
+            window.location.href = "{{ url_for('index') }}";
+        } else {
+            alert('Ошибка при загрузке: ' + xhr.status);
+            resetUI();
+        }
+    };
+
+    xhr.onerror = function() {
+        alert('Произошла ошибка сети.');
+        resetUI();
+    };
+
+    function resetUI() {
+        progressWrapper.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.textContent = 'Загрузить';
+        progressBar.style.width = '0%';
+        progressPercent.textContent = '0%';
+    }
+
+    xhr.open('POST', "{{ url_for('upload') }}", true);
+    // ВАЖНО: Flask-WTF требует CSRF токен, который мы берем из скрытого поля формы
+    xhr.send(formData);
+};
+</script>
+{% endblock %}

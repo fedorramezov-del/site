@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}LAN Chat | SpaceShare{% endblock %}
+
+{% block content %}
+
+<div class="lan-chat">
+
+    <div class="lan-chat-header">
+        Дружелюбный чат
+    </div>
+
+    <div id="chat-box" class="lan-chat-box"></div>
+
+    <div id="reply-preview" class="lan-reply-preview"></div>
+
+    <div class="lan-chat-input">
+
+        <input
+        id="msg"
+        type="text"
+        placeholder="Введите сообщение"
+        autocomplete="off"
+        >
+
+        <button onclick="sendMsg()"class="btn-view">
+            Отправить
+        </button>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<script>
+
+const socket = io()
+
+const chat = document.getElementById("chat-box")
+
+let replyMessage = null
+
+
+socket.on("message", function(data){
+
+    let replyBlock = ""
+
+    if(data.reply){
+        replyBlock = `
+        <div class="lan-chat-reply">
+            ↪ ${data.reply}
+        </div>`
+    }
+
+    const msg = document.createElement("div")
+    msg.classList.add("lan-chat-message")
+
+    msg.innerHTML = `
+
+        <img src="${data.avatar}" class="lan-chat-avatar">
+
+        <div class="lan-chat-content">
+
+            <div class="lan-chat-meta">
+
+                <span class="lan-chat-user">
+                    ${data.username}
+                </span>
+
+                <span class="lan-chat-time">
+                    ${data.time}
+                </span>
+
+            </div>
+
+            ${replyBlock}
+
+            <div class="lan-chat-text">
+                ${data.message}
+            </div>
+
+            <div class="lan-chat-actions">
+
+                <button onclick="reply('${data.username}: ${data.message}')" class="btn-view">
+                    Ответить
+                </button>
+
+            </div>
+
+        </div>
+
+    `
+
+    chat.appendChild(msg)
+
+    chat.scrollTop = chat.scrollHeight
+
+})
+
+
+function reply(text){
+
+    replyMessage = text
+
+    document.getElementById("reply-preview").innerText =
+    "Ответ на: " + text
+
+}
+
+
+function sendMsg(){
+
+    const input = document.getElementById("msg")
+
+    if(input.value.trim() === "") return
+
+    socket.emit("send_message",{
+
+        message: input.value,
+        reply: replyMessage
+
+    })
+
+    replyMessage = null
+
+    document.getElementById("reply-preview").innerText = ""
+
+    input.value = ""
+
+}
+
+
+document.getElementById("msg")
+.addEventListener("keypress", function(e){
+
+    if(e.key === "Enter"){
+        sendMsg()
+    }
+
+})
+
+</script>
+
+{% endblock %}

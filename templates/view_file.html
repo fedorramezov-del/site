@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Просмотр: {{ file.filename }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="view-wrapper auth-card" style="max-width: 100%; width: auto;">
+        <div class="view-header" style="border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; padding-bottom: 15px;">
+            <h1>{{ file.filename }}</h1>
+            <div class="view-meta" style="color: var(--text-muted); font-size: 0.9em;">
+                <span>Размер: {{ (file_size /1024/ 1024)|round(2) }} MB</span> | 
+                <span>Загружен: {{ file.upload_time | localtime }} </span>
+            </div>
+        </div>
+
+        <div class="file-display" style="margin: 20px 0; text-align: center;">
+            {% set ext = file.filename.lower() %}
+            
+            {# Отображение изображений #}
+            {% if ext.endswith(('.png','_png','png', '.jpg','_jpg','jpg', '.jpeg','_jpeg','jpeg', '.gif','_gif','gif' '.webp','_webp','webp', '.svg','_svg','svg', '.bmp', '.bmp', '_jpg' )) %}
+                <img src="{{ url_for('download_file', file_id=file.id) }}" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--glass-border);">
+
+            {# Отображение PDF #}
+            {% elif ext.endswith('.pdf',) %}
+                <iframe src="{{ url_for('get_raw_file', file_id=file.id) }}" width="100%" height="600px" style="border: none; border-radius: 8px;"></iframe>
+
+            {# Отображение текста #}
+            {% elif ext.endswith(('.txt', '.py', '.js', '.css', '.html', '.json','.docx')) %}
+                <pre style="text-align: left; background: #0f172a; padding: 20px; border-radius: 8px; overflow-x: auto; border: 1px solid var(--glass-border); color: var(--accent-color); font-family: 'Consolas', monospace;"><code>{{ content }}</code></pre>
+
+            {# Аудио файлы #}
+            {% elif ext.endswith(('.mp3','.wav','.ogg','.m4a')) %}
+                <audio controls style="width: 100%; max-width: 600px;">
+                    <source src="{{ url_for('get_raw_file', file_id=file.id) }}">
+                    Ваш браузер не поддерживает аудио.
+                </audio>
+            {# Видео файлы #}
+            {% elif ext.endswith(('.mp4','.webm','.mov')) %}
+                <video controls style="max-width: 100%; border-radius: 8px; border: 1px solid var(--glass-border);">
+                    <source src="{{ url_for('get_raw_file', file_id=file.id) }}">
+                    Ваш браузер не поддерживает видео.
+                </video>
+            {# Для остальных файлов #}
+            {% else %}
+                <div class="no-preview" style="padding: 40px; color: var(--text-muted);">
+                    <div style="font-size: 50px; margin-bottom: 10px;">📄</div>
+                    <p>Предпросмотр недоступен для этого типа файла.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="view-footer" style="margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 20px; display: flex; gap: 15px; text-decoration: none; ">
+            <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn"style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none;">
+                Скачать файл
+            </a>
+            <a href="{{ url_for('index') }}" class="btn" style="background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none;">
+                Назад к списку
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
